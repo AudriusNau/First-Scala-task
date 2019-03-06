@@ -8,7 +8,7 @@
 	@form(modules.note.routes.NoteController.create()) {
 		@inputText(newNoteForm("text"))
 		@select(newNoteForm("color"), Color.values.map(color => (color.toString, color.toString)).toSeq)
-		@select(newNoteForm("labels"), Seq("1" -> "work", "2" -> "cooking", "3" -> "sports"), 'multiple -> true)
+		@select(newNoteForm("labelIds"), Seq(("1" ,"work"), ("2" , "cooking"), ("3" , "sports")), 'multiple -> true)
 		@CSRF.formField
 
 		<div class="buttons">

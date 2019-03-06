@@ -3,8 +3,8 @@
 CREATE TABLE relationTbl (
   noteId bigint,
   labelId bigint,
-  foreign key (noteId) reference notes (id),
-  foreign key (labelId) reference labels (id)
+  FOREIGN KEY (noteId) REFERENCES notes (id),
+  FOREIGN KEY (labelId) REFERENCES labels (id),
   PRIMARY KEY(noteId, labelId)
 );
 
