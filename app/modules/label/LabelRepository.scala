@@ -29,7 +29,7 @@ class LabelRepository @Inject()(dbConfigProvider:DatabaseConfigProvider)(implici
   def create(newLabel: NewLabel): Future[Label] = {
     val query = (labels.map(p =>p.label)
       returning labels
-      )+= (newLabel.label)
+      )+= newLabel.label
     db.run(query)
   }
 

@@ -13,7 +13,7 @@ package object note {
     mapping(
       "text" -> nonEmptyText,
       "color" -> of(colorFormFormatter),
-
+      "labelIds"-> seq(longNumber)
 
     )(NewNote.apply)(NewNote.unapply)
   }
