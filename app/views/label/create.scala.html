@@ -1,0 +1,14 @@
+@import helper._
+@import modules.label.NewLabel
+@(newLabelForm: Form[NewLabel])(implicit request: MessagesRequestHeader)
+
+@main("Create a label") {
+@form(modules.label.routes.LabelController.create()) {
+@inputText(newLabelForm("label"))
+@CSRF.formField
+
+<div class="buttons">
+    <input type="submit" value="Add label"/>
+</div>
+}
+}

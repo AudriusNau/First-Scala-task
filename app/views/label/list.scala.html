@@ -1,0 +1,30 @@
+@import helper._
+@import modules.label.Label
+@(labels: Seq[Label])(implicit request: MessagesRequestHeader)
+
+@request.flash.get("success").map { key =>
+@request.messages(key)
+}
+
+@main("Labels") {
+<a href="@modules.label.routes.LabelController.createView()" >Create a label</a>
+
+<table>
+    <thead>
+    <tr>
+        <td>List of labels:<br></br> </td>
+    </tr>
+    </thead>
+    <tbody>
+    @Option(labels).filter(_.nonEmpty).map { labels =>
+    @labels.map { label =>
+    <tr >
+        <td>@label.label</td>
+    </tr>
+    }
+    }.getOrElse {
+    <tr><td>There are no labels</td></tr>
+    }
+    </tbody>
+</table>
+}

@@ -1,0 +1,20 @@
+@import helper._
+@import modules.note.NewNote
+@import modules.note.Color
+@import modules.label.Label
+@(newNoteForm: Form[NewNote])(implicit request: MessagesRequestHeader)
+
+@main("Create a note") {
+	@form(modules.note.routes.NoteController.create()) {
+		@inputText(newNoteForm("text"))
+		@select(newNoteForm("color"), Color.values.map(color => (color.toString, color.toString)).toSeq)
+		@select(newNoteForm("labels"), Seq("1" -> "work", "2" -> "cooking", "3" -> "sports"), 'multiple -> true)
+		@CSRF.formField
+
+		<div class="buttons">
+			<input type="submit" value="Add note"/>
+		</div>
+	}
+
+
+}

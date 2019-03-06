@@ -1,0 +1,30 @@
+@import helper._
+@import modules.note.Note
+@(notes: Seq[Note])(implicit request: MessagesRequestHeader)
+
+@request.flash.get("success").map { key =>
+	@request.messages(key)
+}
+
+@main("Notes") {
+	<a href="@modules.note.routes.NoteController.createView()" >Create a note</a>
+
+	<table>
+		<thead>
+			<tr>
+				<td>Text</td>
+			</tr>
+		</thead>
+		<tbody>
+			@Option(notes).filter(_.nonEmpty).map { notes =>
+				@notes.map { note =>
+					<tr style="background-color: @note.color.toString.toLowerCase">
+						<td>@note.text</td>
+					</tr>
+				}
+			}.getOrElse {
+				<tr><td>There are no notes</td></tr>
+			}
+		</tbody>
+	</table>
+}
