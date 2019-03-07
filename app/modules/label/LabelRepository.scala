@@ -1,17 +1,15 @@
 package modules.label
 
 import javax.inject.{Inject, Singleton}
-import play.api.db.slick.DatabaseConfigProvider
-import slick.jdbc.JdbcProfile
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.jdbc.{JdbcProfile, PostgresProfile}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class LabelRepository @Inject()(dbConfigProvider:DatabaseConfigProvider)(implicit ec:ExecutionContext){
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+class LabelRepository  @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec:ExecutionContext)extends LabelComponent with HasDatabaseConfigProvider[PostgresProfile]  {
 
-  import dbConfig._
   import profile.api._
 
   private class LabelTable(tag:Tag) extends Table[Label](tag, "labels") {
@@ -20,7 +18,7 @@ class LabelRepository @Inject()(dbConfigProvider:DatabaseConfigProvider)(implici
 
     def * = (id,label) <> ((Label.apply _).tupled, Label.unapply)
   }
-  private val labels = TableQuery[LabelTable]
+
 
   def list(): Future[Seq[Label]] = {
     db.run(labels.result)

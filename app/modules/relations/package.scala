@@ -9,16 +9,16 @@ package object relations {
 
   val createRelationForm: Form[NewRelation] = Form {
     mapping(
-      "noteId" -> longNumber,
-      "labelId"-> longNumber
+      "note_id" -> longNumber,
+      "label_id"-> longNumber
     )(NewRelation.apply)(NewRelation.unapply)
   }
  case class NewRelation(
-   noteId : Long,
-   labelId: Long
+   note_id : Long,
+   label_id: Long
   )
   case class Relation(
-  noteId: Long,
-  labelId:Long
+  note_id: Long,
+  label_id:Long
   )
 }
