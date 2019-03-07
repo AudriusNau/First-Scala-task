@@ -1,14 +1,17 @@
 @import helper._
 @import modules.note.NewNote
 @import modules.note.Color
+@import modules.label.LabelRepository
 @import modules.label.Label
-@(newNoteForm: Form[NewNote])(implicit request: MessagesRequestHeader)
+@import modules.label.LabelComponent
+@(newNoteForm: Form[NewNote],labels: Seq[Label])(implicit request: MessagesRequestHeader)
 
 @main("Create a note") {
 	@form(modules.note.routes.NoteController.create()) {
+
 		@inputText(newNoteForm("text"))
 		@select(newNoteForm("color"), Color.values.map(color => (color.toString, color.toString)).toSeq)
-		@select(newNoteForm("labelIds"), Seq(("1" ,"work"), ("2" , "cooking"), ("3" , "sports")), 'multiple -> true)
+		@select(newNoteForm("labelIds"),labels.map(label=>(label.id.toString,label.label.toString)) , 'multiple -> true)
 		@CSRF.formField
 
 		<div class="buttons">

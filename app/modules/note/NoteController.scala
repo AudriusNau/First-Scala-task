@@ -3,12 +3,14 @@ package modules.note
 import javax.inject.Inject
 import play.api.mvc.{Action, _}
 import views.html
+import modules.label.{LabelComponent, LabelRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NoteController @Inject()(
-    repo: NoteRepository,
-    cc: MessagesControllerComponents
+                                repo: NoteRepository,
+                                repLabel:LabelRepository,
+                                cc: MessagesControllerComponents
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
   def list(): Action[AnyContent] = Action.async { implicit request =>
@@ -20,8 +22,13 @@ class NoteController @Inject()(
       }
   }
 
-  def createView() = Action { implicit request: MessagesRequest[AnyContent] =>
-    Ok(html.note.create(createNoteForm))
+  def createView() = Action.async { implicit request: MessagesRequest[AnyContent] =>
+    repLabel
+      .list()
+      .map{
+        labels=>
+          Ok(html.note.create(createNoteForm, labels))
+      }
   }
 
   def create(): Action[AnyContent] = Action.async { implicit request =>
@@ -29,7 +36,12 @@ class NoteController @Inject()(
       .bindFromRequest()
       .fold(
         formWithErrors =>
-          Future.successful(Ok(html.note.create(formWithErrors))),
+          repLabel
+            .list()
+            .map{
+              labels=>
+          Ok(html.note.create(formWithErrors,labels))
+            },
         newNote =>
           repo
             .create(newNote)
