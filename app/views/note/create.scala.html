@@ -7,6 +7,18 @@
 @(newNoteForm: Form[NewNote],labels: Seq[Label])(implicit request: MessagesRequestHeader)
 
 @main("Create a note") {
+	<script src="@routes.Assets.versioned("javascripts/jscolor.js")"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+			$("#color-select").on("change", function() {
+
+				var selectedColor = $(this).val()
+				$("#get_colors").val(selectedColor);
+				$("#get_colors").css('backgroundColor', selectedColor);
+			});
+		});
+	</script>
 	@form(modules.note.routes.NoteController.create()) {
 
 		@inputText(newNoteForm("text"))
@@ -14,10 +26,21 @@
 		@select(newNoteForm("labelIds"),labels.map(label=>(label.id.toString,label.label.toString)) , 'multiple -> true)
 		@CSRF.formField
 
+		color: <input  class="jscolor {hash:true}" id="get_colors" value="ab2567">
+
+<body>
+<select id="color-select" name="color">
+	<option value="#ab2567">Purple</option>
+	<option value="#FFFF00">Yellow</option>
+	<option value="#33CC33">Green</option>
+	<option value="#111DAB">Blue</option>
+	<option value="#10E5E3">Cyan</option>
+	<option value="#E50A0A">Red</option>
+</select>
+</body>
 		<div class="buttons">
+
 			<input type="submit" value="Add note"/>
 		</div>
 	}
-
-
 }
