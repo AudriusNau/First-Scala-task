@@ -3,9 +3,9 @@ package modules.note
 import javax.inject.Inject
 import play.api.mvc.{Action, _}
 import views.html
-import modules.label.{LabelComponent, LabelRepository}
+import modules.label.{ LabelRepository}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
 
 class NoteController @Inject()(
                                 repo: NoteRepository,

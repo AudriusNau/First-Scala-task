@@ -18,7 +18,7 @@
 		<tbody>
 			@Option(notes).filter(_.nonEmpty).map { notes =>
 				@notes.map { note =>
-					<tr style="background-color: @note.color.toString.toLowerCase">
+					<tr style="background-color: @note.color">
 						<td>@note.text</td>
 					</tr>
 				}
