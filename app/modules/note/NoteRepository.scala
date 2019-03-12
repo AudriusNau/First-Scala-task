@@ -15,16 +15,13 @@ class NoteRepository @Inject()(
 
   import profile.api._
 
-  implicit private val colorColumnType = MappedColumnType.base[Color.Value, String](
-    { enum => enum.toString },
-    { string => Color.withName(string) }
-  )
+
 
   private class NoteTable(tag: Tag) extends Table[Note](tag, "notes") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("text")
-    def color = column[Color.Value]("color")
+    def color = column[String]("color")
 
     def * = (id, name, color) <> ((Note.apply _).tupled, Note.unapply)
   }
