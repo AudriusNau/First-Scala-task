@@ -1,6 +1,6 @@
 @import helper._
 @import modules.note.Note
-@(notes: Seq[Note])(implicit request: MessagesRequestHeader)
+@(notes: Seq[Note],currentFilter: String)(implicit request: MessagesRequestHeader)
 
 @request.flash.get("success").map { key =>
 	@request.messages(key)
@@ -12,7 +12,11 @@
 	<table>
 		<thead>
 			<tr>
-				<td>Text</td>
+				<p>Notes</p>
+				@helper.form(action=modules.note.routes.NoteController.list()) {
+				<input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by text..."/>
+				<input type="submit" id="searchsubmit" value="Filter by name" class="btn primary"/>
+				}
 			</tr>
 		</thead>
 		<tbody>
