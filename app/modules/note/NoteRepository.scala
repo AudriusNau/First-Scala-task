@@ -27,8 +27,13 @@ class NoteRepository @Inject()(
   }
 
   private val notes = TableQuery[NoteTable]
-  def list(): Future[Seq[Note]] = {
-    db.run(notes.result)
+
+  def list(filter: String = "%"): Future[Seq[Note]] = {
+    val query= for{
+      note <- notes if note.name.toLowerCase like filter.toLowerCase}
+      yield (note)
+
+    db.run(query.result)
   }
 
   def create(newNote: NewNote): Future[Note] = {

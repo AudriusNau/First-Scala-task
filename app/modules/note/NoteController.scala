@@ -3,9 +3,9 @@ package modules.note
 import javax.inject.Inject
 import play.api.mvc.{Action, _}
 import views.html
-import modules.label.{ LabelRepository}
+import modules.label.LabelRepository
 
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
 
 class NoteController @Inject()(
                                 repo: NoteRepository,
@@ -13,12 +13,12 @@ class NoteController @Inject()(
                                 cc: MessagesControllerComponents
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
-  def list(): Action[AnyContent] = Action.async { implicit request =>
+  def list(filter: String): Action[AnyContent] = Action.async { implicit request =>
     repo
-      .list()
+      .list( filter = ("%" + filter + "%"))
       .map {
         notes =>
-          Ok(html.note.list(notes))
+          Ok(html.note.list(notes,filter))
       }
   }
 
