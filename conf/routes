@@ -7,7 +7,7 @@ GET     /                           controllers.PersonController.index
 POST    /person                     controllers.PersonController.addPerson
 GET     /persons                    controllers.PersonController.getPersons
 
-GET     /notes                      modules.note.NoteController.list(f ?= "")
+GET     /notes                      modules.note.NoteController.list(f ?= "", labels: List[Long]?=List.empty)
 GET     /notes/create               modules.note.NoteController.createView()
 POST    /notes/create               modules.note.NoteController.create()
 

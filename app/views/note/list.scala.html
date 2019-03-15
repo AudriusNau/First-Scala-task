@@ -1,12 +1,13 @@
 @import helper._
 @import modules.note.Note
-@(notes: Seq[Note],currentFilter: String)(implicit request: MessagesRequestHeader)
+@import modules.label.Label
+@(notes: Seq[(Note,Seq[Label])],currentFilter: String,labels: Seq[Label],labelsFilter: List[Long])(implicit request: MessagesRequestHeader)
 
 @request.flash.get("success").map { key =>
 	@request.messages(key)
 }
 
-@main("Notes") {
+@main("Notes"){
 	<a href="@modules.note.routes.NoteController.createView()" >Create a note</a>
 
 	<table>
@@ -15,15 +16,21 @@
 				<p>Notes</p>
 				@helper.form(action=modules.note.routes.NoteController.list()) {
 				<input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by text..."/>
-				<input type="submit" id="searchsubmit" value="Filter by name" class="btn primary"/>
+				<select multiple name="labels">
+
+					@labels.map { label =>
+					<option  value="@label.id" >@label.label</option>
+					}
+				</select>
+				<input type="submit" id="searchsubmit" value="Filter" class="btn primary"/>
 				}
 			</tr>
 		</thead>
 		<tbody>
 			@Option(notes).filter(_.nonEmpty).map { notes =>
 				@notes.map { note =>
-					<tr style="background-color: @note.color">
-						<td>@note.text</td>
+					<tr style="background-color: @note._1.color">
+						<td>@note._1.text</td>
 					</tr>
 				}
 			}.getOrElse {

@@ -4,7 +4,6 @@ import javax.inject.Inject
 import play.api.mvc.{Action, _}
 import views.html
 import modules.label.LabelRepository
-
 import scala.concurrent.ExecutionContext
 
 class NoteController @Inject()(
@@ -13,13 +12,14 @@ class NoteController @Inject()(
                                 cc: MessagesControllerComponents
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
-  def list(filter: String): Action[AnyContent] = Action.async { implicit request =>
-    repo
-      .list( filter = ("%" + filter + "%"))
-      .map {
-        notes =>
-          Ok(html.note.list(notes,filter))
-      }
+  def list(filter: String,labelList: List[Long]): Action[AnyContent] = Action.async { implicit request =>
+
+    for {
+      notes <- repo.list( filter = "%" + filter + "%",labelList)
+      label <- repLabel.list()
+    } yield {
+      Ok(html.note.list(notes,filter, label, labelList))
+    }
   }
 
   def createView() = Action.async { implicit request: MessagesRequest[AnyContent] =>
@@ -46,7 +46,7 @@ class NoteController @Inject()(
           repo
             .create(newNote)
             .map(_ =>
-              Redirect(routes.NoteController.list())
+              Redirect(routes.NoteController.list("",List.empty))
             )
       )
   }

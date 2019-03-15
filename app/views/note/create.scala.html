@@ -22,13 +22,13 @@
 	@form(modules.note.routes.NoteController.create()) {
 
 		@inputText(newNoteForm("text"))
-
 		@select(newNoteForm("labelIds"),labels.map(label=>(label.id.toString,label.label.toString)) , 'multiple -> true)
 		@CSRF.formField
 
  color: <input name="color" class="jscolor {hash:true}" id="get_colors" value="newNoteForm("color")">
 
 <body>
+
 <select id="color-select" >
 	<option value="#ab2567">Purple</option>
 	<option value="#FFFF00">Yellow</option>
