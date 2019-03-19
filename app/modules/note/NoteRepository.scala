@@ -1,12 +1,11 @@
 package modules.note
 
 import javax.inject.{Inject, Singleton}
-import modules.label
 import modules.label.{Label, LabelComponent}
 import modules.relations.{Relation, RelationComponent}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.PostgresProfile
-
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -29,8 +28,9 @@ class NoteRepository @Inject()(
   }
 
   private val notes = TableQuery[NoteTable]
+  private var asc : Boolean= true
 
-  def list(filter: String = "%", labelsFilter: List[Long]): Future[Seq[(Note, Seq[Label])]] = {
+  def list(filter: String = "%", labelsFilter: List[Long]): Future[mutable.LinkedHashMap[Note, Seq[Label]]] = {
 
     val query = notes
       .joinLeft(relations)
@@ -67,17 +67,35 @@ class NoteRepository @Inject()(
       .map { case ((n, r), l) =>
         (n, l)
       }
-
-    val test = db.run(query.result).map {
-      t =>
-        t.groupBy(_._1).mapValues(t => t.map(what => what._2.getOrElse(null))).toSeq
+    val sortedQuery = if (asc) {
+      query.sortBy(_._1.name.asc)
+    }else{
+      query.sortBy(_._1.name.desc)
     }
-    test
+    asc = !asc
 
-//    for {
-//      v <- test
-//      s <- v.groupBy(_._1).mapValues(t => t.map(what => what._2.getOrElse(null)))
-//    }yield s
+
+    val filteredList =  db.run(sortedQuery.result).map {
+    seq => seq.foldLeft(mutable.LinkedHashMap[Note, Seq[Label]]()) {
+      case (acc,(n, Some(l)))=> {
+        acc += (
+          n -> (l +: acc.getOrElse(n,Seq[Label]()))
+        )
+      }
+      }
+
+    }
+
+      print("hi")
+      filteredList
+  /* val filteredList =  db.run(query.result).map {
+      t =>
+        t.groupBy(_._1).mapValues(t => t.map(that => that._2.orNull)).toSeq
+
+    }
+    filteredList
+*/
+
   }
 
   def create(newNote: NewNote): Future[Note] = {

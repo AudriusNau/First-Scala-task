@@ -1,7 +1,8 @@
 @import helper._
 @import modules.note.Note
 @import modules.label.Label
-@(notes: Seq[(Note,Seq[Label])],currentFilter: String,labels: Seq[Label],labelsFilter: List[Long])(implicit request: MessagesRequestHeader)
+@import scala.collection.mutable
+@(notes: mutable.LinkedHashMap[Note,Seq[Label]],currentFilter: String,labels: Seq[Label],labelsFilter: List[Long])(implicit request: MessagesRequestHeader)
 
 @request.flash.get("success").map { key =>
 	@request.messages(key)
@@ -12,8 +13,26 @@
 
 	<table>
 		<thead>
+		<style>
+table {
+  border-spacing: 0;
+  width: 99%;
+  border: 1px solid #ddd;
+}
+
+th {
+  cursor: pointer;
+}
+
+th, td {
+  text-align: left;
+  padding: 20px;
+}
+
+
+</style>
 			<tr>
-				<p>Notes</p>
+
 				@helper.form(action=modules.note.routes.NoteController.list()) {
 				<input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by text..."/>
 				<select multiple name="labels">
@@ -22,11 +41,15 @@
 					<option  value="@label.id" >@label.label</option>
 					}
 				</select>
+
 				<input type="submit" id="searchsubmit" value="Filter" class="btn primary"/>
 				}
 			</tr>
 		</thead>
 		<tbody>
+		<table id="myTable">
+
+			<th><a href="@modules.note.routes.NoteController.list()">Note</a></th>
 			@Option(notes).filter(_.nonEmpty).map { notes =>
 				@notes.map { note =>
 					<tr style="background-color: @note._1.color">
@@ -36,6 +59,45 @@
 			}.getOrElse {
 				<tr><td>There are no notes</td></tr>
 			}
+<!--			<script>
+&lt;!&ndash;function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("myTable");
+  switching = true;
+  dir = "asc";
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount ++;
+    } else {
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}&ndash;&gt;
+</script>-->
+		</table>
 		</tbody>
 	</table>
 }
