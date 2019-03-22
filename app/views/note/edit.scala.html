@@ -1,0 +1,33 @@
+@import helper._
+@import modules.note.EditNote
+@import modules.note.Note
+@import scala.collection.mutable
+@import modules.label.Label
+@(note:Note, NoteForm: Form[EditNote])(implicit messages: Messages)
+
+@main("Edit Note") {
+<script src="@routes.Assets.versioned("javascripts/jscolor.js")"></script>
+
+
+@form(modules.note.routes.NoteController.update(note.id)) {
+
+<fieldset>
+
+        @inputText(NoteForm("text"), '_label -> "Name")
+        @inputText(
+	    NoteForm("color"),
+        'class -> "jscolor {hash:true}",
+        'style -> "background-color: @note.color"
+)
+
+
+</fieldset>
+
+<div class="actions">
+    <input type="submit" value="Save this Note" class="btn primary"> or
+    <a href="@modules.note.routes.NoteController.list()" class="btn">Cancel</a>
+</div>
+
+}
+
+}

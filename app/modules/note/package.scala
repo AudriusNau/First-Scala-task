@@ -15,6 +15,13 @@ package object note {
 
     )(NewNote.apply)(NewNote.unapply)
   }
+  val NoteForm: Form[EditNote]= Form {
+    mapping(
+
+      "text" -> nonEmptyText,
+      "color"-> nonEmptyText
+    )(EditNote.apply)(EditNote.unapply)
+  }
 
   case class NewNote(
       text: String,
@@ -27,4 +34,8 @@ package object note {
       text: String,
       color:String
   )
+  case class EditNote(
+      text: String,
+      color:String
+                 )
 }

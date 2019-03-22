@@ -2,6 +2,7 @@
 @import modules.note.Note
 @import modules.label.Label
 @import scala.collection.mutable
+
 @(notes: mutable.LinkedHashMap[Note,Seq[Label]],currentFilter: String,labels: Seq[Label],labelsFilter: List[Long])(implicit request: MessagesRequestHeader)
 
 @request.flash.get("success").map { key =>
@@ -53,51 +54,19 @@ th, td {
 			@Option(notes).filter(_.nonEmpty).map { notes =>
 				@notes.map { note =>
 					<tr style="background-color: @note._1.color">
-						<td>@note._1.text</td>
+						<td align="center">@note._1.text
+							<a href="@modules.note.routes.NoteController.edit(note._1.id)"><i class="edit icon" ></i></a>
+						</td>
+
 					</tr>
+
 				}
 			}.getOrElse {
 				<tr><td>There are no notes</td></tr>
 			}
-<!--			<script>
-&lt;!&ndash;function sortTable(n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable");
-  switching = true;
-  dir = "asc";
-  while (switching) {
-    switching = false;
-    rows = table.rows;
-    for (i = 1; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      switchcount ++;
-    } else {
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
-}&ndash;&gt;
-</script>-->
+
 		</table>
+
 		</tbody>
 	</table>
 }

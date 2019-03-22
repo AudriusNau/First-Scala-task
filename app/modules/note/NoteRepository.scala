@@ -85,17 +85,7 @@ class NoteRepository @Inject()(
       }
 
     }
-
-      print("hi")
       filteredList
-  /* val filteredList =  db.run(query.result).map {
-      t =>
-        t.groupBy(_._1).mapValues(t => t.map(that => that._2.orNull)).toSeq
-
-    }
-    filteredList
-*/
-
   }
 
   def create(newNote: NewNote): Future[Note] = {
@@ -110,5 +100,12 @@ class NoteRepository @Inject()(
               .map(_ => note)
         )
     db.run(action)
+  }
+  def findById(id: Long): Future[Option[Note]] =
+    db.run(notes.filter(_.id === id).result.headOption)
+
+  def update(note: Note): Future[Int] = {
+    val updated = notes.insertOrUpdate(Note(note.id, note.text,note.color))
+    db.run(updated)
   }
 }

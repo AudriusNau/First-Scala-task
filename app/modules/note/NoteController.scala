@@ -4,7 +4,9 @@ import javax.inject.Inject
 import play.api.mvc.{Action, _}
 import views.html
 import modules.label.LabelRepository
-import scala.concurrent.ExecutionContext
+
+import scala.concurrent.{ExecutionContext, Future}
+
 
 class NoteController @Inject()(
                                 repo: NoteRepository,
@@ -50,4 +52,47 @@ class NoteController @Inject()(
             )
       )
   }
+  def edit(id:Long)= Action.async{implicit request =>
+    val note= repo.findById(id)
+    note.map { case note =>
+      note match {
+        case Some(c)=> Ok(html.note.edit(c,NoteForm.fill(EditNote(c.text,c.color))))
+        case None => NotFound
+      }
+    }
+  }
+  def update(id:Long) = Action.async { implicit request =>
+
+    val futNote = repo.findById(id)
+    NoteForm
+      .bindFromRequest()
+      .fold(
+        formWithErrors =>
+          for {
+            noteOp <- repo.findById(id)
+          } yield Ok(html.note.edit(noteOp.get, formWithErrors)),
+        editNote =>
+          for {
+            noteOp <- repo.findById(id)
+            update <- repo.update(Note(id, editNote.text, editNote.color))
+          } yield Redirect(routes.NoteController.list("", List.empty)))
+
+    //    repo
+    //      .findById(id)
+    //      .map{ note =>
+    //        NoteForm
+    //          .bindFromRequest()
+    //          .fold(
+    //            formWithErrors =>
+    //              Ok(html.note.edit(note.get,formWithErrors)),
+    //            editNote =>
+    //              repo
+    //                .update(editNote)
+    //                .map(_ =>
+    //                  Redirect(routes.NoteController.list("",List.empty)))
+    //
+    //          )
+    //      }
+  }
+
 }
