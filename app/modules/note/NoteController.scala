@@ -77,22 +77,12 @@ class NoteController @Inject()(
             update <- repo.update(Note(id, editNote.text, editNote.color))
           } yield Redirect(routes.NoteController.list("", List.empty)))
 
-    //    repo
-    //      .findById(id)
-    //      .map{ note =>
-    //        NoteForm
-    //          .bindFromRequest()
-    //          .fold(
-    //            formWithErrors =>
-    //              Ok(html.note.edit(note.get,formWithErrors)),
-    //            editNote =>
-    //              repo
-    //                .update(editNote)
-    //                .map(_ =>
-    //                  Redirect(routes.NoteController.list("",List.empty)))
-    //
-    //          )
-    //      }
+  }
+  /** Handle computer deletion. */
+  def delete(id: Long) = Action.async { implicit rs =>
+    for {
+      _ <- repo.delete(id)
+    } yield Redirect(routes.NoteController.list("", List.empty))
   }
 
 }

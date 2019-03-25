@@ -19,5 +19,8 @@ POST    /labels/create               modules.label.LabelController.create()
 GET     /notes/:id             modules.note.NoteController.edit(id:Long)
 POST    /notes/:id             modules.note.NoteController.update(id:Long)
 
+# Delete a computer
+POST    /notes/:id/delete       modules.note.NoteController.delete(id:Long)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

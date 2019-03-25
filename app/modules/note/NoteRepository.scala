@@ -108,4 +108,11 @@ class NoteRepository @Inject()(
     val updated = notes.insertOrUpdate(Note(note.id, note.text,note.color))
     db.run(updated)
   }
+  /** Delete a computer. */
+  def delete(id: Long): Future[Unit] = {
+
+    db.run(relations.filter(_.note_id === id).delete).map(_ => ())
+    db.run(notes.filter(_.id === id).delete).map(_ => ())
+  }
+
 }
