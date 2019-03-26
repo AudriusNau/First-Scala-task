@@ -23,7 +23,7 @@ class NoteRepository @Inject()(
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("text")
     def color = column[String]("color")
-
+    def file = column[Option[String]]("file")
     def * = (id, name, color) <> ((Note.apply _).tupled, Note.unapply)
   }
 
@@ -88,11 +88,11 @@ class NoteRepository @Inject()(
       filteredList
   }
 
-  def create(newNote: NewNote): Future[Note] = {
-    val action = ((notes.map(p => (p.name, p.color))
+  def create(newNote: NewNote, file: String): Future[Note] = {
+    val action = ((notes.map(p => (p.name, p.color, p.file))
       returning notes
       into ((_, note) => note)
-      ) += (newNote.text, newNote.color))
+      ) += (newNote.text, newNote.color,Option(file)))
         .flatMap(
           note =>
             DBIO
@@ -114,5 +114,6 @@ class NoteRepository @Inject()(
     db.run(relations.filter(_.note_id === id).delete).map(_ => ())
     db.run(notes.filter(_.id === id).delete).map(_ => ())
   }
+
 
 }

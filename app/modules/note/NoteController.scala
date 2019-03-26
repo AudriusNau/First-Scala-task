@@ -1,9 +1,13 @@
 package modules.note
 
+import java.nio.file.Paths
+
 import javax.inject.Inject
 import play.api.mvc.{Action, _}
 import views.html
 import modules.label.LabelRepository
+import play.api.Configuration
+import play.api.libs.Files
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,6 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NoteController @Inject()(
                                 repo: NoteRepository,
                                 repLabel:LabelRepository,
+                                config: Configuration,
                                 cc: MessagesControllerComponents
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
@@ -33,24 +38,38 @@ class NoteController @Inject()(
       }
   }
 
-  def create(): Action[AnyContent] = Action.async { implicit request =>
+  def create(): Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData).async { implicit request => {
+
     createNoteForm
       .bindFromRequest()
       .fold(
         formWithErrors =>
           repLabel
             .list()
-            .map{
-              labels=>
-          Ok(html.note.create(formWithErrors,labels))
+            .map {
+              labels =>
+                Ok(html.note.create(formWithErrors, labels))
             },
-        newNote =>
-          repo
-            .create(newNote)
-            .map(_ =>
-              Redirect(routes.NoteController.list("",List.empty))
-            )
+        newNote => {
+          val fileExist = request.body.file("picture")
+          if (fileExist.nonEmpty) fileExist.map{
+            picture=>
+              var filename = Paths.get(picture.filename).toAbsolutePath.toString
+              val fileSize = picture.fileSize
+
+                repo
+                  .create(newNote,filename)
+
+
+          } else repo
+            .create(newNote,"")
+
+          Future.successful(Redirect(routes.NoteController.list("", List.empty)))
+        }
       )
+
+
+   }
   }
   def edit(id:Long)= Action.async{implicit request =>
     val note= repo.findById(id)

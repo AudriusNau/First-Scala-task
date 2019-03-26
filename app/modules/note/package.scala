@@ -11,7 +11,9 @@ package object note {
     mapping(
       "text" -> nonEmptyText,
       "color" -> nonEmptyText,
-      "labelIds"-> seq(longNumber)
+      "labelIds"-> seq(longNumber),
+      "file" -> optional(nonEmptyText)
+
 
     )(NewNote.apply)(NewNote.unapply)
   }
@@ -26,7 +28,8 @@ package object note {
   case class NewNote(
       text: String,
       color: String,
-      labelIds: Seq[Long]
+      labelIds: Seq[Long] ,
+      file: Option[String] = Some("")
   )
 
   case class Note(

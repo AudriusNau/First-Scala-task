@@ -3,7 +3,8 @@
 CREATE TABLE notes (
   id BIGSERIAL PRIMARY KEY,
   text TEXT,
-  color TEXT
+  color TEXT,
+  file TEXT
 );
 
 # --- !Downs
